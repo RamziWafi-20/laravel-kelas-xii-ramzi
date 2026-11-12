@@ -17,9 +17,8 @@ class CastSeeder extends Seeder
     {
         //
         $faker = Faker::create('id_ID');
-        for($i = 1; $i <= 50; $i++){
-            // insert data ke table cast menggunakan Faker
-            \DB::table('casts')->insert([
+        for ($i = Cast::count(); $i < 50; $i++) {
+            Cast::create([
                 'name' => $faker->name,
                 'age' => $faker->numberBetween(7,80),
                 'bio' => $faker->company,

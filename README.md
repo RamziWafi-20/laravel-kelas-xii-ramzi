@@ -30,10 +30,18 @@ php artisan key:generate
 ```
 7. Migration & Seeder
 ```bash
-php artisan migrate -s
+php artisan migrate --seed
 ```
-8. copy folder image yang ada pada folder public ke dalam folder storage/app
-9. Buat symlink untuk storage
+Jika database sudah dimigrasi tetapi belum berisi film, jalankan seeder:
 ```bash
-php artisan storage:link
-```  
+php artisan db:seed
+```
+Gambar poster film sudah tersedia di `public/template/images` dan akan ditampilkan langsung oleh aplikasi.
+
+Login dan pendaftaran tersedia melalui tombol Login. Pendaftaran membuat akun dengan role `user`. Setelah login, admin dan user diarahkan ke halaman utama; admin dapat membuka dashboard melalui tombol Dashboard.
+
+Dashboard admin tersedia di `/admin` dan dilindungi middleware role admin. Setelah login, admin tetap masuk ke halaman utama dan dapat membuka dashboard melalui tombol Dashboard di header. Menu admin mencakup pengelolaan film, komentar, user, cast, dan actor/peran. Untuk membuat akun admin awal:
+```bash
+php artisan db:seed --class=AdminSeeder
+```
+Kredensial awal: `admin@example.com` / `12345678`. Ganti password setelah login pertama.

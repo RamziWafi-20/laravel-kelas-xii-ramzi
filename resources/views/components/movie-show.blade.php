@@ -38,7 +38,7 @@
           <div class="single-right-grids">
 
             <div class="col-md-4 single-right-grid-left">
-              <a href="{{ route('movies.show', $film->id) }}"><img src="/{{ $film->poster }}" alt="" /></a>
+              <a href="{{ route('movies.show', $film->id) }}"><img src="{{ $film->poster_url }}" alt="{{ $film->title }}" /></a>
             </div>
             <div class="col-md-8 single-right-grid-right">
               <div class="song-info">
@@ -53,16 +53,20 @@
                       <thead>
                         <tr>
                         <th>Cast</th>
-                        <th>Peran</th>
+                        <th>Karakter</th>
                         </tr>
                       </thead>
                       <tbody>
-                        @foreach ($perans as $peran)
-                        <tr>
-                          <td class="w3-list-info">{{ $peran->cast_id }}</td>
-                          <td class="w3-list-info">{{ $peran->actor }}</td>
-                        </tr>
-                        @endforeach
+                        @forelse ($perans as $peran)
+                          <tr>
+                            <td class="w3-list-info">{{ $peran->cast?->name ?? 'Nama cast belum tersedia' }}</td>
+                            <td class="w3-list-info">{{ $peran->actor }}</td>
+                          </tr>
+                        @empty
+                          <tr>
+                            <td class="w3-list-info" colspan="2">Data cast belum tersedia</td>
+                          </tr>
+                        @endforelse
                       </tbody>
                     </table>
                   </div>
@@ -118,23 +122,30 @@
           <div class="all-comments-info">
             <a href="#">Comments</a>
             <div class="agile-info-wthree-box">
-              <form>
-                <input type="text" placeholder="Name" required="">			           					   
-                <input type="text" placeholder="Email" required="">
-                <input type="text" placeholder="Phone" required="">
-                <textarea placeholder="Message" required=""></textarea>
-                <input type="submit" value="SEND">
-                <div class="clearfix"> </div>
-              </form>
+              @auth
+                <form action="{{ route('comments.store', $film) }}" method="post">
+                  @csrf
+                  <textarea name="comment" maxlength="500" placeholder="Tulis komentar (maksimal 500 karakter)" required>{{ old('comment') }}</textarea>
+                  @error('comment')
+                    <div class="alert alert-danger" role="alert">{{ $message }}</div>
+                  @enderror
+                  <input type="submit" value="SEND">
+                  <div class="clearfix"> </div>
+                </form>
+              @else
+                <p>Silakan login untuk memberikan komentar pada film ini.</p>
+                <a class="btn btn-warning" href="{{ route('login', ['redirect_to' => '/movies/' . $film->id]) }}">Login untuk berkomentar</a>
+              @endauth
             </div>
           </div>
           <div class="media-grids">
             @foreach ($comments as $comment)
               <div class="media">
-                <h5>{{ $comment->user_id }}</h5>
+                <h5>{{ $comment->user?->name ?? 'Pengguna tidak dikenal' }}</h5>
+                <small>{{ $comment->created_at?->diffForHumans() }}</small>
                 <div class="media-left">
                   <a href="#">
-                    <img src="{{ asset('storage/images/user.jpg') }}" title="One movies" alt=" " />
+                    <img src="{{ asset('template/images/user.jpg') }}" title="One movies" alt=" " />
                   </a>
                 </div>
                 <div class="media-body">
@@ -151,7 +162,7 @@
           <div class="single-grid-right">
             <div class="single-right-grids">
               <div class="col-md-4 single-right-grid-left">
-                <a href="{{ route('movies.show', $film->id) }}"><img src="/{{ $film->poster }}" alt="" /></a>
+                <a href="{{ route('movies.show', $film->id) }}"><img src="{{ $film->poster_url }}" alt="{{ $film->title }}" /></a>
               </div>
               <div class="col-md-8 single-right-grid-right">
                 <a href="{{ route('movies.show', $film->id) }}" class="title">{{ $film->title }}</a>
@@ -172,7 +183,7 @@
         @foreach ($filmByRelease as $filmRelease)
           <div class="item">
             <div class="w3l-movie-gride-agile w3l-movie-gride-agile1">
-              <a href="{{ route('movies.show', $filmRelease->id) }}" class="hvr-shutter-out-horizontal"><img src="/{{ $filmRelease->poster }}" title="{{ $filmRelease->title }}" class="img-responsive" alt=" " />
+              <a href="{{ route('movies.show', $filmRelease->id) }}" class="hvr-shutter-out-horizontal"><img src="{{ $filmRelease->poster_url }}" title="{{ $filmRelease->title }}" class="img-responsive" alt="{{ $filmRelease->title }}" />
                 <div class="w3l-action-icon"><i class="fa fa-play-circle" aria-hidden="true"></i></div>
               </a>
               <div class="mid-1 agileits_w3layouts_mid_1_home">

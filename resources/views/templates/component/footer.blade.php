@@ -23,19 +23,19 @@
     <div class="col-md-7 w3ls_footer_grid1_right">
       <ul>
         <li>
-          <a href="genres.html">Movies</a>
+          <a href="{{ route('movies') }}">Movies</a>
         </li>
         <li>
-          <a href="horror.html">Action</a>
+          <a href="{{ route('genre', 'action') }}">Action</a>
         </li>
         <li>
-          <a href="genres.html">Adventure</a>
+          <a href="{{ route('genre', 'adventure') }}">Adventure</a>
         </li>
         <li>
-          <a href="comedy.html">Comedy</a>
+          <a href="{{ route('genre', 'comedy') }}">Comedy</a>
         </li>
         <li>
-          <a href="faq.html">FAQ</a>
+          <a href="{{ route('faq') }}">FAQ</a>
         </li>
         <li>
         </li>

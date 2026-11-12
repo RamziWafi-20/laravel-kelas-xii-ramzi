@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
-use App\Models\{User, Profile};
+use App\Models\{User, Profile, Role};
 
 class AdminSeeder extends Seeder
 {
@@ -17,23 +17,26 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        $faker = Faker::create('id_ID');
+        $role = Role::firstOrCreate(['name' => 'admin']);
+        $admin = User::firstOrNew(['email' => 'admin@example.com']);
 
-        $profile = Profile::create([
-            "alamat"    => $faker->address,
-            "umur"    => $faker->numberBetween(1,50),
-            "bio"      => 'administrator',
-        ]);
+        if (! $admin->exists || ! $admin->profile_id) {
+            $admin->profile_id = Profile::create([
+                'alamat' => Faker::create('id_ID')->address,
+                'umur' => 30,
+                'bio' => 'administrator',
+            ])->id;
+        }
 
-        User::create([
-            'name' => 'admin',
-            'email' => 'admin@example.com',
-            'email_verified_at' => now(),
-            'password' => Hash::make('12345678'),
-            'remember_token' => Str::random(10),
-            'role_id' => 2,
-            'profile_id' => $profile->id,
-        ]);
+        if (! $admin->exists) {
+            $admin->password = Hash::make('12345678');
+            $admin->email_verified_at = now();
+            $admin->remember_token = Str::random(10);
+        }
+
+        $admin->name = 'admin';
+        $admin->role = 'admin';
+        $admin->role_id = $role->id;
+        $admin->save();
     }
 }
